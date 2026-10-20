@@ -1,0 +1,345 @@
+{% extends 'base.html' %}
+
+{% block title %}Check Application Status — Community Connect{% endblock %}
+
+{% block content %}
+<div class="container-narrow">
+
+  {% if application %}
+    <!-- Detailed Application Status Card -->
+    <div style="background-color: #ffffff; border: 1px solid var(--gray-green); border-radius: 8px; padding: 2.25rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.04); margin-bottom: 2rem;">
+      
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid var(--beige); padding-bottom: 1.25rem; margin-bottom: 1.5rem;">
+        <div>
+          <span style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.5px; color: #666; font-weight: 600;">
+            Assistance Request
+          </span>
+          <h1 style="font-size: 1.75rem; font-weight: 700; color: #24292e; margin-top: 0.2rem;" id="app_ref_heading">
+            {{ application.reference }}
+          </h1>
+          <p style="font-size: 0.9rem; color: #666;">
+            Submitted on {{ application.created_at|date:"F d, Y \a\t g:i A" }}
+          </p>
+        </div>
+
+        <div>
+          <span class="badge-status badge-{{ application.status }}" style="font-size: 0.95rem; padding: 0.4rem 0.85rem;" id="app_status_badge">
+            {{ application.get_status_display }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Official Citizen Response -->
+      {% if application.citizen_response %}
+      <div style="background-color: #f7f9f8; border-left: 4px solid var(--green); border-radius: 4px; padding: 1.25rem; margin-bottom: 1.75rem;">
+        <h3 style="font-size: 1rem; font-weight: 600; color: var(--green-dark); margin-bottom: 0.5rem;">
+          <i class="fa-solid fa-comment-dots"></i> Message from Community Connect Staff:
+        </h3>
+        <p style="font-size: 0.95rem; line-height: 1.6; color: #333333; white-space: pre-line;">
+          {{ application.citizen_response }}
+        </p>
+      </div>
+      {% elif application.status == 'PENDING' %}
+      <div style="background-color: var(--off-white); border-left: 4px solid var(--gray-green); border-radius: 4px; padding: 1rem; margin-bottom: 1.75rem; font-size: 0.95rem; color: #555;">
+        <i class="fa-solid fa-clock"></i> Your application is in the queue and will be reviewed shortly by our staff.
+      </div>
+      {% endif %}
+
+      <!-- Request Overview -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.95rem; margin-bottom: 1.75rem; background-color: #faf9f6; padding: 1.2rem; border-radius: 6px;">
+        <div><strong>Applicant:</strong> {{ application.full_name }}</div>
+        <div><strong>Category:</strong> {{ application.category.name }}</div>
+        <div><strong>Location:</strong> {{ application.location }}</div>
+        <div><strong>Contact Phone:</strong> {{ application.phone }}</div>
+      </div>
+
+      <div style="margin-bottom: 1.75rem;">
+        <h4 style="font-size: 0.95rem; font-weight: 600; color: #444; margin-bottom: 0.4rem;">Description of Need:</h4>
+        <p style="font-size: 0.95rem; color: #444; line-height: 1.55; background-color: #ffffff; border: 1px solid var(--gray-green); padding: 0.85rem; border-radius: 4px;">
+          {{ application.description }}
+        </p>
+      </div>
+
+      <!-- Supporting Documents -->
+      <div style="margin-top: 1.5rem;">
+        <h4 style="font-size: 0.95rem; font-weight: 700; color: #333; margin-bottom: 0.6rem; display: flex; align-items: center; justify-content: space-between;">
+          <span>
+            <i class="fa-solid fa-paperclip" style="color: var(--green);"></i> Supporting Documents:
+          </span>
+          <span style="font-size: 0.8rem; font-weight: 500; color: #666;">
+            {{ application.documents.all|length }} attached
+          </span>
+        </h4>
+
+        {% if application.documents.all %}
+          <div style="display: flex; flex-direction: column; gap: 0.6rem;">
+            {% for doc in application.documents.all %}
+              <div style="background-color: #fcfbf9; border: 1px solid var(--beige); border-radius: 6px; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; min-width: 220px;">
+                  <div style="width: 38px; height: 38px; border-radius: 6px; background-color: var(--off-white); border: 1px solid var(--gray-green); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">
+                    {% if doc.file_extension|lower == '.pdf' %}
+                      <i class="fa-solid fa-file-pdf" style="color: #b54242;"></i>
+                    {% elif doc.file_extension|lower in '.png,.jpg,.jpeg,.webp,.gif' %}
+                      <i class="fa-solid fa-file-image" style="color: var(--green);"></i>
+                    {% else %}
+                      <i class="fa-solid fa-file-lines" style="color: var(--green-dark);"></i>
+                    {% endif %}
+                  </div>
+                  <div>
+                    <div style="font-weight: 600; font-size: 0.95rem; color: #24292e; word-break: break-all;">
+                      {{ doc.original_filename }}
+                    </div>
+                    <div style="color: #666; font-size: 0.8rem; margin-top: 0.15rem;">
+                      {{ doc.file_extension|upper }} &bull; {{ doc.file_size|filesizeformat }} &bull; Uploaded {{ doc.uploaded_at|date:"M d, Y" }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Action Buttons: Preview & Open -->
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                  <button type="button" 
+                          onclick="openDocPreview('preview_modal_{{ doc.id }}')"
+                          class="nav-link-btn"
+                          id="preview_doc_btn_{{ doc.id }}"
+                          style="background-color: var(--green); padding: 0.45rem 0.95rem; font-size: 0.85rem; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.45rem; font-family: 'Outfit', sans-serif !important;">
+                    <i class="fa-solid fa-eye"></i> Preview Document
+                  </button>
+
+                  <a href="{% url 'applications:document_preview' doc.id %}?token={{ application.access_token }}" 
+                     target="_blank" 
+                     rel="noopener noreferrer"
+                     class="nav-link-item"
+                     id="open_tab_btn_{{ doc.id }}"
+                     title="Open full document in a separate browser tab to verify all details"
+                     style="border: 1px solid var(--gray-green); background-color: #ffffff; padding: 0.4rem 0.85rem; border-radius: 6px; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.4rem; color: var(--dark-text); font-weight: 600; font-family: 'Outfit', sans-serif !important;">
+                    <i class="fa-solid fa-arrow-up-right-from-square" style="font-size: 0.75rem;"></i> Open Tab
+                  </a>
+                </div>
+              </div>
+
+              <!-- Document Preview Verification Modal -->
+              <div id="preview_modal_{{ doc.id }}" 
+                   style="display: none; position: fixed; inset: 0; z-index: 9999; background-color: rgba(36, 41, 46, 0.75); backdrop-filter: blur(2px); align-items: center; justify-content: center; padding: 1rem;">
+                <div style="background-color: #ffffff; border-radius: 8px; border: 1px solid var(--gray-green); width: 100%; max-width: 960px; max-height: 92vh; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.25); overflow: hidden;">
+                  
+                  <!-- Modal Header -->
+                  <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray-green); display: flex; justify-content: space-between; align-items: center; background-color: #faf9f6;">
+                    <div style="display: flex; align-items: center; gap: 0.65rem;">
+                      <div style="width: 32px; height: 32px; border-radius: 6px; background-color: var(--green); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;">
+                        <i class="fa-solid fa-file-circle-check"></i>
+                      </div>
+                      <div>
+                        <h3 style="font-size: 1.05rem; font-weight: 700; color: #24292e; margin: 0; font-family: 'Outfit', sans-serif !important;">
+                          Verify Document: {{ doc.original_filename }}
+                        </h3>
+                        <div style="font-size: 0.8rem; color: #666; margin-top: 0.1rem;">
+                          {{ doc.file_extension|upper }} &bull; {{ doc.file_size|filesizeformat }} &bull; Uploaded {{ doc.uploaded_at|date:"M d, Y g:i A" }}
+                        </div>
+                      </div>
+                    </div>
+                    <button type="button" 
+                            onclick="closeDocPreview('preview_modal_{{ doc.id }}')" 
+                            style="background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: #666; padding: 0.2rem 0.6rem; line-height: 1; font-family: 'Outfit', sans-serif !important;"
+                            aria-label="Close Preview">
+                      &times;
+                    </button>
+                  </div>
+
+                  <!-- Verification Instruction Bar -->
+                  <div style="background-color: var(--off-white); border-bottom: 1px solid var(--beige); padding: 0.65rem 1.25rem; font-size: 0.85rem; color: #444; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                      <i class="fa-solid fa-circle-check" style="color: var(--green-dark);"></i>
+                      <span><strong>Document Verification:</strong> Review the content below to verify accuracy, authenticity, and completeness.</span>
+                    </div>
+                    <div>
+                      <a href="{% url 'applications:document_preview' doc.id %}?token={{ application.access_token }}" 
+                         target="_blank" 
+                         class="nav-link-item"
+                         style="border: 1px solid var(--gray-green); background-color: #ffffff; padding: 0.25rem 0.65rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; font-family: 'Outfit', sans-serif !important;">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open in New Tab
+                      </a>
+                    </div>
+                  </div>
+
+                  <!-- Modal Document Viewport -->
+                  <div style="flex: 1; overflow: auto; padding: 1rem; background-color: #ece8dc; min-height: 500px; display: flex; align-items: center; justify-content: center;">
+                    {% if doc.file_extension|lower == '.pdf' %}
+                      <iframe src="{% url 'applications:document_preview' doc.id %}?token={{ application.access_token }}" 
+                              style="width: 100%; height: 68vh; min-height: 500px; border: 1px solid var(--gray-green); border-radius: 4px; background-color: #ffffff;"
+                              title="Document Preview: {{ doc.original_filename }}">
+                        <p style="padding: 1.5rem; text-align: center;">
+                          Your browser does not support inline PDFs. 
+                          <a href="{% url 'applications:document_preview' doc.id %}?token={{ application.access_token }}" target="_blank" style="color: var(--green-dark); text-decoration: underline; font-weight: 600;">
+                            Click here to open and verify the PDF document.
+                          </a>
+                        </p>
+                      </iframe>
+                    {% elif doc.file_extension|lower in '.png,.jpg,.jpeg,.webp,.gif' %}
+                      <div style="text-align: center; max-height: 68vh; overflow: auto; width: 100%;">
+                        <img src="{% url 'applications:document_preview' doc.id %}?token={{ application.access_token }}" 
+                             alt="{{ doc.original_filename }}" 
+                             style="max-width: 100%; max-height: 65vh; object-fit: contain; border-radius: 4px; border: 1px solid var(--gray-green); box-shadow: 0 4px 12px rgba(0,0,0,0.12);">
+                      </div>
+                    {% else %}
+                      <div style="background-color: #ffffff; border: 1px solid var(--gray-green); border-radius: 8px; padding: 2.5rem 2rem; text-align: center; max-width: 520px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                        <i class="fa-solid fa-file-lines" style="font-size: 2.8rem; color: var(--green); margin-bottom: 1rem;"></i>
+                        <h4 style="font-size: 1.15rem; font-weight: 700; color: #24292e; margin-bottom: 0.5rem; font-family: 'Outfit', sans-serif !important;">
+                          {{ doc.original_filename }}
+                        </h4>
+                        <p style="font-size: 0.9rem; color: #666; margin-bottom: 1.5rem; line-height: 1.5;">
+                          This document type ({{ doc.file_extension|upper }}) can be reviewed directly in your browser or downloaded to verify its content.
+                        </p>
+                        <a href="{% url 'applications:document_preview' doc.id %}?token={{ application.access_token }}" 
+                           target="_blank" 
+                           class="nav-link-btn" 
+                           style="padding: 0.6rem 1.4rem; font-size: 0.95rem; font-family: 'Outfit', sans-serif !important;">
+                          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open & Verify Content
+                        </a>
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <!-- Modal Footer -->
+                  <div style="padding: 0.75rem 1.25rem; border-top: 1px solid var(--gray-green); background-color: #faf9f6; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.82rem; color: #666;">
+                      Application Reference: <strong>{{ application.reference }}</strong>
+                    </span>
+                    <button type="button" 
+                            onclick="closeDocPreview('preview_modal_{{ doc.id }}')" 
+                            class="nav-link-item"
+                            style="border: 1px solid var(--gray-green); background-color: #ffffff; border-radius: 4px; padding: 0.45rem 1.1rem; font-weight: 600; font-size: 0.85rem; cursor: pointer; font-family: 'Outfit', sans-serif !important;">
+                      Close Preview
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p style="font-size: 0.9rem; color: #777;">No documents uploaded with this application.</p>
+        {% endif %}
+      </div>
+
+      <div style="border-top: 1px solid var(--beige); padding-top: 1.5rem; margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
+        <a href="{% url 'applications:status' %}" style="color: var(--green-dark); font-size: 0.9rem; font-weight: 600;">
+          <i class="fa-solid fa-magnifying-glass"></i> Look up another application
+        </a>
+        <a href="{% url 'applications:landing' %}" class="nav-link-item" style="border: 1px solid var(--gray-green); border-radius: 4px; padding: 0.4rem 0.9rem;">
+          Return to Home
+        </a>
+      </div>
+
+    </div>
+
+  {% else %}
+
+    <!-- Lookup Form -->
+    <div style="background-color: #ffffff; border: 1px solid var(--gray-green); border-radius: 8px; padding: 2.5rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+      
+      <div style="text-align: center; margin-bottom: 2rem;">
+        <div style="width: 48px; height: 48px; background-color: var(--beige); color: var(--green-dark); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem;">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </div>
+        <h1 style="font-size: 1.75rem; font-weight: 700; color: #24292e; margin-bottom: 0.35rem;">
+          Check Application Status
+        </h1>
+        <p style="color: #666; font-size: 0.95rem; max-width: 500px; margin: 0 auto;">
+          Enter your unique Application Reference and Security Token provided upon submission to check the current review status.
+        </p>
+      </div>
+
+      {% if error %}
+      <div class="alert-box error" style="margin-bottom: 1.5rem;">
+        <span>{{ error }}</span>
+      </div>
+      {% endif %}
+
+      <form method="post" novalidate id="status_lookup_form">
+        {% csrf_token %}
+
+        <div style="margin-bottom: 1.35rem;">
+          <label for="id_reference" style="display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; color: #333;">
+            Application Reference Number <span style="color: #b54242;">*</span>
+          </label>
+          {{ form.reference }}
+          {% if form.reference.errors %}
+            <div style="color: #b54242; font-size: 0.85rem; margin-top: 0.3rem;">
+              {{ form.reference.errors.0 }}
+            </div>
+          {% else %}
+            <small style="color: #777; font-size: 0.82rem; display: block; margin-top: 0.25rem;">
+              Example: APP-7F3A2B
+            </small>
+          {% endif %}
+        </div>
+
+        <div style="margin-bottom: 1.75rem;">
+          <label for="id_access_token" style="display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; color: #333;">
+            Security Access Token <span style="color: #b54242;">*</span>
+          </label>
+          {{ form.access_token }}
+          {% if form.access_token.errors %}
+            <div style="color: #b54242; font-size: 0.85rem; margin-top: 0.3rem;">
+              {{ form.access_token.errors.0 }}
+            </div>
+          {% else %}
+            <small style="color: #777; font-size: 0.82rem; display: block; margin-top: 0.25rem;">
+              Found on your submission confirmation page.
+            </small>
+          {% endif %}
+        </div>
+
+        <button type="submit" class="nav-link-btn" id="lookup_status_btn" style="width: 100%; justify-content: center; border: none; cursor: pointer; font-size: 1rem; padding: 0.8rem;">
+          <i class="fa-solid fa-magnifying-glass"></i> Check Status
+        </button>
+      </form>
+
+      <div style="text-align: center; margin-top: 2rem; border-top: 1px solid var(--beige); padding-top: 1.25rem;">
+        <a href="{% url 'applications:apply' %}" style="color: var(--green-dark); font-weight: 600; font-size: 0.95rem;">
+          Need to submit a new assistance request? Click here to apply.
+        </a>
+      </div>
+
+    </div>
+
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  function openDocPreview(modalId) {
+    var modal = document.getElementById(modalId);
+    if (modal) {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+  }
+
+  function closeDocPreview(modalId) {
+    var modal = document.getElementById(modalId);
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  }
+
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('[id^="preview_modal_"]').forEach(function(modal) {
+        modal.style.display = 'none';
+      });
+      document.body.style.overflow = 'auto';
+    }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (e.target && e.target.id && e.target.id.startsWith('preview_modal_')) {
+      e.target.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  });
+</script>
+{% endblock %}

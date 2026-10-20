@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}Apply for Assistance — Community Connect{% endblock %}
+
+{% block content %}
+<div class="container-narrow">
+  <div style="background-color: #ffffff; border: 1px solid var(--gray-green); border-radius: 8px; padding: 2.25rem 2rem; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
+    
+    <div style="margin-bottom: 1.75rem; border-bottom: 1px solid var(--beige); padding-bottom: 1rem;">
+      <h1 style="font-size: 1.75rem; font-weight: 700; color: #24292e; margin-bottom: 0.35rem;">
+        Application for Community Assistance
+      </h1>
+      <p style="color: #666666; font-size: 0.95rem;">
+        Please fill out this form to request assistance. Required fields are marked with an asterisk (<span style="color: #b54242; font-weight: bold;">*</span>).
+        You do not need to register an account.
+      </p>
+    </div>
+
+    {% if form.non_field_errors %}
+    <div class="alert-box error" style="margin-bottom: 1.5rem;">
+      {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" novalidate id="assistance_application_form">
+      {% csrf_token %}
+
+      <!-- Full Name -->
+      <div style="margin-bottom: 1.35rem;">
+        <label for="id_full_name" style="display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; color: #333;">
+          Full Name <span style="color: #b54242;">*</span>
+        </label>
+        {{ form.full_name }}
+        {% if form.full_name.errors %}
+          <div style="color: #b54242; font-size: 0.85rem; margin-top: 0.3rem;">
+            {{ form.full_name.errors.0 }}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Phone Number & Email -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.35rem;">
+        <div>
+          <label for="id_phone" style="display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; color: #333;">
+            Phone Number <span style="color: #b54242;">*</span>
+          </label>
+          {{ form.phone }}
+          {% if form.phone.errors %}
+            <div style="color: #b54242; font-size: 0.85rem; margin-top: 0.3rem;">
+              {{ form.phone.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+
+        <div>
+          <label for="id_email" style="display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; color: #333;">
+            Email Address <span style="color: #888; font-weight: normal;">(optional)</span>
+          </label>
+          {{ form.email }}
+          {% if form.email.errors %}
+            <div style="color: #b54242; font-size: 0.85rem; margin-top: 0.3rem;">
+              {{ form.email.errors.0 }}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- General Location -->
+      <div style="margin-bottom: 1.35rem;">
+        <label for="id_location" style="display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; color: #333;">
+          General Location <span style="color: #b54242;">*</span>
+        </label>
+        {{ form.location }}
+        {% if form.location.errors %}
+          <div style="color: #b54242; font-size: 0.85rem; margin-top: 0.3rem;">
+            {{ form.location.errors.0 }}
+          </div>
+        {% else %}
+          <small style="color: #777; font-size: 0.82rem; display: block; margin-top: 0.25rem;">
+            Your neighborhood, district, or town.
+          </small>
+        {% endif %}
+      </div>
+
+      <!-- Category -->
+      <div style="margin-bottom: 1.35rem;">
+        <label for="id_category" style="display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; color: #333;">
+          Type of Assistance Requested <span style="color: #b54242;">*</span>
+        </label>
+        {{ form.category }}
+        {% if form.category.errors %}
+          <div style="color: #b54242; font-size: 0.85rem; margin-top: 0.3rem;">
+            {{ form.category.errors.0 }}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Description of Need -->
+      <div style="margin-bottom: 1.35rem;">
+        <label for="id_description" style="display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; color: #333;">
+          Description of Need <span style="color: #b54242;">*</span>
+        </label>
+        {{ form.description }}
+        {% if form.description.errors %}
+          <div style="color: #b54242; font-size: 0.85rem; margin-top: 0.3rem;">
+            {{ form.description.errors.0 }}
+          </div>
+        {% else %}
+          <small style="color: #777; font-size: 0.82rem; display: block; margin-top: 0.25rem;">
+            Describe the situation, required support, and any urgency.
+          </small>
+        {% endif %}
+      </div>
+
+      <!-- Supporting Document -->
+      <div style="margin-bottom: 2rem; background-color: var(--off-white); border: 1px dashed var(--gray-green); border-radius: 6px; padding: 1.25rem;">
+        <label for="id_document" style="display: block; font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; color: #333;">
+          Supporting Document <span style="color: #888; font-weight: normal;">(optional)</span>
+        </label>
+        {{ form.document }}
+        {% if form.document.errors %}
+          <div style="color: #b54242; font-size: 0.85rem; margin-top: 0.3rem;">
+            {{ form.document.errors.0 }}
+          </div>
+        {% else %}
+          <small style="color: #666; font-size: 0.82rem; display: block; margin-top: 0.35rem;">
+            Accepted formats: PDF, PNG, JPG, JPEG, DOCX, TXT. Maximum file size: 10 MB.
+          </small>
+        {% endif %}
+      </div>
+
+      <!-- Submit Action -->
+      <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--beige); padding-top: 1.5rem;">
+        <a href="{% url 'applications:landing' %}" style="color: #666; font-size: 0.95rem;">
+          <i class="fa-solid fa-arrow-left"></i> Cancel
+        </a>
+        <button type="submit" class="nav-link-btn" id="submit_application_btn" style="border: none; cursor: pointer; font-size: 1rem; padding: 0.75rem 1.8rem;">
+          <i class="fa-solid fa-paper-plane"></i> Submit Application
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

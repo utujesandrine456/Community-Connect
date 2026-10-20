@@ -1,0 +1,175 @@
+/* ============================================================
+   Community Connect — Custom Stylesheet
+   Strict Color Palette (Solid Colors Only, NO GRADIENTS):
+   - Muted Green:    #769382
+   - Warm Beige:     #E0D7BF
+   - Soft Gray-Green: #C0C3B9
+   - Warm Off-White: #F3EFE3
+   - Dark Text:      #24292e
+   Typography: Outfit (Google Fonts)
+   ============================================================ */
+
+:root {
+  --green:           #769382;
+  --green-dark:      #5a7465;
+  --green-light:     #8ca697;
+  --beige:           #E0D7BF;
+  --beige-dark:      #c7bda2;
+  --gray-green:      #C0C3B9;
+  --gray-green-dark: #9da097;
+  --off-white:       #F3EFE3;
+  --white:           #ffffff;
+  --dark-text:       #24292e;
+  --muted-text:      #606770;
+  --danger:          #b54242;
+  --danger-light:    #fae8e8;
+  --success:         #2d6a4f;
+  --success-light:   #eaf4ee;
+  --font-family:     'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --radius:          6px;
+  --radius-sm:       4px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body, button, input, select, textarea, optgroup, .btn, .nav-link-btn, .nav-link-admin, .nav-link-item,
+h1, h2, h3, h4, h5, h6, p, label, table, th, td, a {
+  font-family: var(--font-family) !important;
+}
+
+body {
+  background-color: var(--off-white) !important;
+  color: var(--dark-text) !important;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Dedicated FontAwesome 6 icon rules */
+.fa, .fas, .fa-solid {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+  font-style: normal !important;
+  display: inline-block;
+}
+.far, .fa-regular {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  display: inline-block;
+}
+.fab, .fa-brands {
+  font-family: "Font Awesome 6 Brands" !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+  display: inline-block;
+}
+.fa::before, .fas::before, .fa-solid::before,
+.far::before, .fa-regular::before,
+.fab::before, .fa-brands::before,
+[class*="fa-"]::before {
+  font-family: inherit !important;
+  font-style: normal !important;
+}
+
+/* Form Controls */
+.form-input,
+.form-select,
+.form-textarea {
+  display: block;
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  color: var(--dark-text);
+  background-color: var(--white);
+  border: 1px solid var(--gray-green);
+  border-radius: var(--radius);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  box-sizing: border-box;
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: var(--green);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(118, 147, 130, 0.25);
+}
+
+.form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* File Input */
+input[type="file"].form-input {
+  padding: 0.45rem;
+  background-color: var(--white);
+  cursor: pointer;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: var(--font-family);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.6rem 1.25rem;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-primary {
+  background-color: var(--green);
+  color: var(--white) !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--green-dark);
+}
+
+.btn-secondary {
+  background-color: var(--beige);
+  color: var(--dark-text) !important;
+  border-color: var(--beige-dark);
+}
+
+.btn-secondary:hover {
+  background-color: var(--beige-dark);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--dark-text) !important;
+  border-color: var(--gray-green);
+}
+
+.btn-outline:hover {
+  background-color: var(--beige);
+}
+
+/* Tables */
+table {
+  border-collapse: collapse;
+}
+
+th {
+  font-weight: 600;
+}
+
+/* Focus visibility for accessibility */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+}

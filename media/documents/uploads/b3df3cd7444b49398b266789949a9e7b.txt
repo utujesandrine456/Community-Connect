@@ -1,0 +1,313 @@
+Cashly + PyBasics Kit: The complete project vision
+The best way to approach this is to treat Cashly as the actual application people use to manage money, while PyBasics Kit is a reusable Python library that provides the calculations Cashly needs.
+Cashly is not going to become a calculator app just because it uses PyBasics Kit. It remains an expense-tracking and budgeting application, with its own interface, accounts, transactions, categories, budgets, reports, and data storage.
+PyBasics Kit will handle the reusable mathematical and financial calculations behind those features.
+1. How the two projects fit together
+Cashly application
+Web interface · Dashboard · Transactions · Budgets · Reports
+
+Cashly backend — Django
+Authentication · Database · Permissions · Business rules · API
+
+PyBasics Kit
+Reusable mathematical and financial calculations
+
+Cashly database
+Users · Income · Expenses · Budgets · Categories
+
+Conceptual architecture: Django retrieves and validates data, calls the calculation functions, and saves changes. PyBasics Kit does not connect directly to the database.
+
+The normal flow is:
+1. A user records an expense in Cashly.
+2. Django verifies the user's permissions and validates the submitted information.
+3. Django saves the expense in the database.
+4. Cashly obtains the relevant income, expenses, and budget data.
+5. The backend calls PyBasics Kit to calculate the balance, budget usage, or other required values.
+6. Cashly returns the results to the interface.
+7. The user sees the updated dashboard and reports.
+This separation makes the two projects easier to maintain and test.
+2. What Cashly will actually do
+Cashly should help users answer four essential questions:
+- How much money do I have?
+- Where is my money going?
+- Am I staying within my budget?
+- How can I plan my spending better?
+From those needs, we can build the application around six core features.
+
+
+
+
+
+
+
+
+
+1. Financial dashboard
+The home page summarizes the user's financial position.
+- Total income for the selected period
+- Total expenses
+- Current balance
+- Savings
+- Budget usage
+- Recent transactions
+- Spending summaries and charts
+
+
+
+
+
+
+
+
+
+
+
+
+2. Income and expense tracking
+Users can record, edit, delete, filter, and search transactions.
+Each transaction can contain an amount, date, category, description, and transaction type, such as income or expense.
+
+
+
+
+
+
+
+
+
+
+
+
+3. Budget management
+Users set a budget for a period or category and track how much has been used.
+Cashly can display the remaining amount, percentage spent, and whether spending has exceeded the budget.
+
+
+
+
+
+
+
+
+
+
+
+
+4. Reports and analytics
+Users can review spending by category, compare periods, view income versus expenses, and identify spending patterns.
+
+
+
+
+
+
+
+
+
+
+
+
+5. Savings goals
+Users can define a target, record contributions, and monitor progress toward goals such as buying a laptop, paying tuition, or building emergency savings.
+
+
+
+
+
+
+
+
+
+
+
+
+6. Notifications and reminders
+Cashly can notify users about approaching budget limits, upcoming bills, and savings milestones. These notifications are a Cashly feature, not a PyBasics Kit feature.
+
+
+
+These are the proposed features for Cashly. They don't all need to be implemented in the first release.
+3. Exactly where PyBasics Kit fits
+PyBasics Kit should be a separate, independently installable Python package. Cashly will install and import it like any other dependency.
+The package will provide the calculation functions; Django will decide when to call them.
+Example: calculating a user's balance
+Suppose a user records:
+- Income: 500,000 RWF
+- Expenses: 175,000 RWF
+Cashly retrieves those totals from its database and calls:
+from pybasics_kit import calculate_balancebalance = calculate_balance(    income=500000,    expenses=175000,)print(balance)  # 325000
+
+
+
+Cashly then displays a balance of 325,000 RWF.
+Example: checking budget usage
+Suppose a user has a monthly budget of 200,000 RWF and has spent 80,000 RWF.
+from pybasics_kit import (    calculate_budget_remaining,    calculate_budget_usage,)remaining = calculate_budget_remaining(    budget=200000,    spending=80000,)usage = calculate_budget_usage(    spending=80000,    budget=200000,)print(remaining)  # 120000print(usage)      # 40.0
+
+
+
+Cashly can display:
+- Budget: 200,000 RWF
+- Spent: 80,000 RWF
+- Remaining: 120,000 RWF
+- Used: 40%
+The numbers above are illustrative examples.
+Which calculations belong in PyBasics Kit?
+Calculation	PyBasics Kit	Cashly
+Calculate a balance from income and expenses	Yes	Calls the function
+Calculate budget usage percentage	Yes	Displays the result
+Calculate tax or discounted price	Yes	Uses it if relevant
+Store a transaction in PostgreSQL	No	Yes
+Determine which user owns a transaction	No	Yes
+Authenticate a user	No	Yes
+Generate a dashboard and charts	No	Yes
+Send budget notifications	No	Yes
+Important: PyBasics Kit should not query the database, know about Django models, or make assumptions about Cashly's users. That independence is what makes it reusable in other projects.
+4. How the Cashly backend should be organized
+Assuming Cashly uses Django and Django REST Framework, I recommend an architecture like this:
+cashly/
+├── manage.py
+├── config/
+│   ├── settings.py
+│   ├── urls.py
+│   └── ...
+├── apps/
+│   ├── users/
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── views.py
+│   │   └── urls.py
+│   ├── transactions/
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── views.py
+│   │   └── urls.py
+│   ├── budgets/
+│   │   ├── models.py
+│   │   ├── serializers.py
+│   │   ├── views.py
+│   │   └── urls.py
+│   ├── categories/
+│   ├── reports/
+│   └── savings/
+├── tests/
+├── requirements.txt
+└── README.md
+
+
+This is a suggested organization, not a requirement to create every folder immediately. If Cashly already has an established structure, we should adapt it rather than rebuild it unnecessarily.
+The role of each part
+- users: registration, login, user profiles, and authentication.
+- transactions: recording and retrieving income and expenses.
+- budgets: setting limits and tracking spending against them.
+- categories: organizing expenses such as food, transport, education, and housing.
+- reports: aggregating data and producing summaries for the dashboard.
+- savings: managing goals and tracking contributions.
+PyBasics Kit would be installed as a dependency of this backend, not copied into every Django app.
+5. The data Cashly needs to store
+The database stores the underlying financial records. The calculations are performed using the relevant records retrieved by Django.
+Here is a conceptual data model.
+User
+
+ID · Email · Password hash · Profile details
+
+One user owns their financial records
+
+Transaction
+Amount · Type · Date · Category · Description
+
+
+Budget
+Limit · Period · Category · Dates
+
+
+Category
+Name · Type · Optional icon
+
+
+Savings goal
+Target · Current progress · Deadline
+
+
+
+
+A few important decisions:
+- Every financial record must be associated with the correct user.
+- Money should be stored using an appropriate fixed-precision database field, such as Django's DecimalField, rather than a floating-point field.
+- Each transaction should have a clearly defined type, such as INCOME or EXPENSE.
+- Dates and budget periods must be handled consistently.
+- The database should store transactions, not just the latest calculated balance. This lets Cashly recalculate accurate historical reports when records change.
+You do not necessarily need a separate database table for the current balance. Cashly can calculate it from transactions, or use a carefully maintained cached balance later if performance requires it.
+6. How the main API endpoints could work
+If Cashly exposes a REST API, its endpoints might look like this:
+Method	Endpoint	Purpose
+POST	/api/v1/auth/register	Register an account
+POST	/api/v1/auth/login	Log in
+GET	/api/v1/dashboard	Retrieve dashboard summaries
+GET	/api/v1/transactions	List transactions
+POST	/api/v1/transactions	Create a transaction
+PATCH	/api/v1/transactions/{id}	Update a transaction
+DELETE	/api/v1/transactions/{id}	Delete a transaction
+GET	/api/v1/budgets	List budgets
+POST	/api/v1/budgets	Create a budget
+GET	/api/v1/reports/summary	Retrieve a financial summary
+GET	/api/v1/savings-goals	List savings goals
+POST	/api/v1/savings-goals	Create a savings goal
+These are suggested endpoints. They should be adjusted to match Cashly's existing API if one already exists.
+For example, when Cashly receives a request to create an expense, the backend should validate the amount and category, verify ownership, save the transaction, and then update or recalculate the relevant summaries. A client should never be trusted to submit its own authoritative balance or budget-usage percentage.
+7. The calculation rules we should agree on
+Before writing PyBasics Kit, we should define exactly what each function means.
+Function	Recommended rule
+calculate_balance(income, expenses)	Income minus expenses
+calculate_total_expenses(expenses)	Sum of expense amounts
+calculate_savings(income, expenses)	Income minus expenses; conceptually similar to balance
+calculate_savings_rate(income, savings)	Savings divided by income, multiplied by 100
+calculate_budget_remaining(budget, spending)	Budget minus spending; may be negative if overspent
+calculate_budget_usage(spending, budget)	Spending divided by budget, multiplied by 100
+calculate_daily_budget(remaining, days)	Remaining amount divided by days
+Two details deserve particular attention.
+First, balance and savings overlap. Both can return income minus expenses. We can retain both if their documentation explains the intended use, or simplify the public API to avoid redundant functions.
+Second, edge cases must be explicit. For example, a zero budget makes budget-usage percentage undefined, and a zero income makes savings rate undefined. We should choose consistent behavior, such as raising ValueError for invalid denominators, and document it. A budget-usage result above 100% is valid when the user overspends.
+For monetary calculations, PyBasics Kit should use Decimal consistently and document how inputs and rounding are handled. It should not silently round every intermediate calculation.
+8. What the PyBasics Kit project will look like
+PyBasics Kit will be developed and tested separately from Cashly.
+pybasics-kit/
+├── src/
+│   └── pybasics_kit/
+│       ├── __init__.py
+│       └── calculations.py
+├── tests/
+│   └── test_calculations.py
+├── README.md
+├── LICENSE
+├── pyproject.toml
+├── .gitignore
+└── LAB_CHECKLIST.md
+
+
+Its public API will be simple:
+from pybasics_kit import (    calculate_percentage,    calculate_average,    calculate_balance,    calculate_budget_usage,    calculate_tax,)
+
+
+
+The __init__.py file exposes the supported public functions, while calculations.py contains their implementations. Tests verify the results, including invalid inputs and edge cases.
+Once the package is working, you can build it, test it on TestPyPI, and publish it to PyPI. Cashly can then install the released version rather than depend on a manually copied file.
+9. How we should build the two projects
+I recommend the following order so we don't build too much before the fundamentals work.
+1. Phase 1 — Finalize PyBasics Kit
+   Agree on the function names, expected results, error handling, and documentation. Implement the calculation functions and automated tests.
+2. Phase 2 — Package and publish
+   Configure pyproject.toml, build the distribution, test installation, publish to TestPyPI, and follow your lab's requirements for the final publication.
+3. Phase 3 — Integrate with Cashly
+   Add the package to Cashly's environment, import its functions, and replace appropriate duplicated calculation logic in the Django backend.
+4. Phase 4 — Complete the core Cashly features
+   Implement transactions, categories, budgets, dashboard summaries, and reports, testing each feature against real database records.
+5. Phase 5 — Improve and deploy
+   Add savings goals, reminders, stronger reporting, security checks, and deployment once the core application is reliable.
+10. What Cashly will ultimately become
+Cashly will be the complete personal-finance application. PyBasics Kit will be a small, independent dependency that helps Cashly—and other applications—perform common calculations consistently.
+The relationship is simple:
+- Cashly owns the user experience and financial records.
+- Django owns application logic, permissions, database access, and APIs.
+- PyBasics Kit owns reusable calculation functions.
+- The database preserves the underlying financial history. I would like you to create another django project named cashly I have already provided you all descriptions for html I mean on UI use font Outfit and for color light green could be good

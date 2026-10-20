@@ -1,0 +1,110 @@
+[
+  {
+    "source": "D:\\Machine Learning\\community_connect\\media\\documents\\staging\\APP-8F6B27_1_residency_proof.txt",
+    "destination": "D:\\Machine Learning\\community_connect\\media\\documents\\organized\\Documents\\APP-8F6B27_1_residency_proof.txt",
+    "category": "Documents",
+    "file_size": 29,
+    "timestamp": "2026-10-14T13:46:23.711037",
+    "status": "moved",
+    "error_message": null
+  },
+  {
+    "source": "D:\\Machine Learning\\community_connect\\media\\documents\\staging\\APP-908581_1_residency_proof.txt",
+    "destination": "D:\\Machine Learning\\community_connect\\media\\documents\\organized\\Documents\\APP-908581_1_residency_proof.txt",
+    "category": "Documents",
+    "file_size": 29,
+    "timestamp": "2026-10-14T13:48:22.609483",
+    "status": "moved",
+    "error_message": null
+  },
+  {
+    "source": "D:\\Machine Learning\\community_connect\\media\\documents\\staging\\APP-C01C5E_1_residency_proof.txt",
+    "destination": "D:\\Machine Learning\\community_connect\\media\\documents\\organized\\Documents\\APP-C01C5E_1_residency_proof.txt",
+    "category": "Documents",
+    "file_size": 29,
+    "timestamp": "2026-10-20T05:49:31.813342",
+    "status": "moved",
+    "error_message": null
+  },
+  {
+    "source": "D:\\Machine Learning\\community_connect\\media\\documents\\staging\\APP-4BD7A7_1_Iheshabubasha_Indangamuntu_UWASE_UTUJE_Sandrine_Papa.docx",
+    "destination": "D:\\Machine Learning\\community_connect\\media\\documents\\organized\\Documents\\APP-4BD7A7_1_Iheshabubasha_Indangamuntu_UWASE_UTUJE_Sandrine_Papa.docx",
+    "category": "Documents",
+    "file_size": 183795,
+    "timestamp": "2026-10-20T05:56:01.788458",
+    "status": "moved",
+    "error_message": null
+  },
+  {
+    "source": "D:\\Machine Learning\\community_connect\\media\\documents\\staging\\APP-A0B9FF_2_UWASE_UTUJE_Sandrine_Resume.pdf",
+    "destination": "D:\\Machine Learning\\community_connect\\media\\documents\\organized\\PDFs\\APP-A0B9FF_2_UWASE_UTUJE_Sandrine_Resume.pdf",
+    "category": "PDFs",
+    "file_size": 145608,
+    "timestamp": "2026-10-20T05:56:01.790374",
+    "status": "moved",
+    "error_message": null
+  },
+  {
+    "source": "D:\\Machine Learning\\community_connect\\media\\documents\\staging\\APP-DB5608_1_residency_proof.txt",
+    "destination": "D:\\Machine Learning\\community_connect\\media\\documents\\organized\\Documents\\APP-DB5608_1_residency_proof.txt",
+    "category": "Documents",
+    "file_size": 29,
+    "timestamp": "2026-10-20T06:09:08.173309",
+    "status": "moved",
+    "error_message": null
+  },
+  {
+    "source": "D:\\Machine Learning\\community_connect\\media\\documents\\staging\\APP-21FFE6_1_residency_proof.txt",
+    "destination": "D:\\Machine Learning\\community_connect\\media\\documents\\organized\\Documents\\APP-21FFE6_1_residency_proof.txt",
+    "category": "Documents",
+    "file_size": 29,
+    "timestamp": "2026-10-20T06:10:21.769231",
+    "status": "moved",
+    "error_message": null
+  },
+  {
+    "source": "D:\\Machine Learning\\community_connect\\media\\documents\\staging\\APP-C00C7E_1_residency_proof.txt",
+    "destination": "D:\\Machine Learning\\community_connect\\media\\documents\\organized\\Documents\\APP-C00C7E_1_residency_proof.txt",
+    "category": "Documents",
+    "file_size": 29,
+    "timestamp": "2026-10-20T06:12:35.281104",
+    "status": "moved",
+    "error_message": null
+  },
+  {
+    "source": "D:\\Machine Learning\\community_connect\\media\\documents\\staging\\APP-28F95B_1_residency_proof.txt",
+    "destination": "D:\\Machine Learning\\community_connect\\media\\documents\\organized\\Documents\\APP-28F95B_1_residency_proof.txt",
+    "category": "Documents",
+    "file_size": 29,
+    "timestamp": "2026-10-20T06:16:59.927286",
+    "status": "moved",
+    "error_message": null
+  },
+  {
+    "source": "D:\\Machine Learning\\community_connect\\media\\documents\\staging\\APP-2ACCF8_1_residency_proof.txt",
+    "destination": "D:\\Machine Learning\\community_connect\\media\\documents\\organized\\Documents\\APP-2ACCF8_1_residency_proof.txt",
+    "category": "Documents",
+    "file_size": 29,
+    "timestamp": "2026-10-20T06:38:16.226994",
+    "status": "moved",
+    "error_message": null
+  },
+  {
+    "source": "D:\\Machine Learning\\community_connect\\media\\documents\\staging\\APP-17169C_1_residency_proof.txt",
+    "destination": "D:\\Machine Learning\\community_connect\\media\\documents\\organized\\Documents\\APP-17169C_1_residency_proof.txt",
+    "category": "Documents",
+    "file_size": 29,
+    "timestamp": "2026-10-20T06:39:30.700171",
+    "status": "moved",
+    "error_message": null
+  },
+  {
+    "source": "D:\\Machine Learning\\community_connect\\media\\documents\\staging\\APP-7DD5D4_1_residency_proof.txt",
+    "destination": "D:\\Machine Learning\\community_connect\\media\\documents\\organized\\Documents\\APP-7DD5D4_1_residency_proof.txt",
+    "category": "Documents",
+    "file_size": 29,
+    "timestamp": "2026-10-20T06:48:19.521649",
+    "status": "moved",
+    "error_message": null
+  }
+]

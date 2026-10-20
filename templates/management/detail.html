@@ -1,0 +1,363 @@
+{% extends 'base.html' %}
+
+{% block title %}Application {{ application.reference }} — Community Connect{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1100px;">
+
+  <!-- Back Link & Header -->
+  <div style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+    <a href="{% url 'management:dashboard' %}" class="nav-link-item" style="border: 1px solid var(--gray-green); padding: 0.4rem 0.9rem; border-radius: 4px; font-size: 0.9rem;">
+      <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+    </a>
+    <div>
+      <span class="badge-status badge-{{ application.status }}" style="font-size: 0.9rem; padding: 0.35rem 0.8rem;">
+        Current Status: {{ application.get_status_display }}
+      </span>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 3fr 2fr; gap: 1.75rem; align-items: start;">
+
+    <!-- Left Column: Application Details & Documents & History -->
+    <div>
+      
+      <!-- Citizen & Request Overview Card -->
+      <div style="background-color: #ffffff; border: 1px solid var(--gray-green); border-radius: 8px; padding: 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 1.75rem;">
+        
+        <div style="border-bottom: 1px solid var(--beige); padding-bottom: 1rem; margin-bottom: 1.25rem;">
+          <span style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; color: var(--green-dark);">
+            Assistance Request Reference
+          </span>
+          <h2 style="font-size: 1.6rem; font-weight: 700; color: #24292e; margin-top: 0.2rem;">
+            {{ application.reference }}
+          </h2>
+          <div style="font-size: 0.85rem; color: #666; margin-top: 0.2rem;">
+            Submitted on {{ application.created_at|date:"F d, Y \a\t g:i A" }}
+            {% if application.reviewed_by %}
+              &bull; Last reviewed by {{ application.reviewed_by.get_full_name|default:application.reviewed_by.username }}
+            {% endif %}
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; font-size: 0.95rem;">
+          <div>
+            <span style="font-size: 0.8rem; color: #666; display: block; font-weight: 600;">Citizen Name</span>
+            <strong style="font-size: 1.05rem; color: #24292e;">{{ application.full_name }}</strong>
+          </div>
+          <div>
+            <span style="font-size: 0.8rem; color: #666; display: block; font-weight: 600;">Assistance Category</span>
+            <span style="background-color: var(--beige); padding: 0.2rem 0.5rem; border-radius: 4px; font-weight: 600;">
+              {{ application.category.name }}
+            </span>
+          </div>
+          <div>
+            <span style="font-size: 0.8rem; color: #666; display: block; font-weight: 600;">Contact Phone</span>
+            <a href="tel:{{ application.phone }}" style="color: var(--green-dark); font-weight: 600;">
+              <i class="fa-solid fa-phone" style="font-size: 0.8rem;"></i> {{ application.phone }}
+            </a>
+          </div>
+          <div>
+            <span style="font-size: 0.8rem; color: #666; display: block; font-weight: 600;">General Location</span>
+            <span><i class="fa-solid fa-location-dot" style="font-size: 0.8rem; color: #888;"></i> {{ application.location }}</span>
+          </div>
+          {% if application.email %}
+          <div style="grid-column: 1 / -1;">
+            <span style="font-size: 0.8rem; color: #666; display: block; font-weight: 600;">Email Address</span>
+            <a href="mailto:{{ application.email }}" style="color: var(--green-dark);">{{ application.email }}</a>
+          </div>
+          {% endif %}
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+          <h3 style="font-size: 0.95rem; font-weight: 700; color: #333; margin-bottom: 0.4rem; text-transform: uppercase; letter-spacing: 0.4px;">
+            Description of Need
+          </h3>
+          <div style="background-color: var(--off-white); border: 1px solid var(--gray-green); border-radius: 6px; padding: 1rem; font-size: 0.95rem; line-height: 1.6; color: #2d2d2d; white-space: pre-line;">
+            {{ application.description }}
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Supporting Documents Section -->
+      <div style="background-color: #ffffff; border: 1px solid var(--gray-green); border-radius: 8px; padding: 1.75rem 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); margin-bottom: 1.75rem;">
+        <h3 style="font-size: 1.15rem; font-weight: 700; color: #24292e; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between;">
+          <span><i class="fa-solid fa-paperclip" style="color: var(--green);"></i> Supporting Documents</span>
+          <span style="font-size: 0.85rem; font-weight: normal; color: #666;">
+            {{ documents|length }} attached
+          </span>
+        </h3>
+
+        {% if documents %}
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            {% for doc in documents %}
+              <div style="background-color: #faf9f6; border: 1px solid var(--beige); border-radius: 6px; padding: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                <div>
+                  <div style="font-weight: 600; font-size: 0.95rem; color: #333;">
+                    <i class="fa-solid fa-file" style="color: var(--green); margin-right: 0.35rem;"></i>
+                    {{ doc.original_filename }}
+                  </div>
+                  <div style="font-size: 0.8rem; color: #666; margin-top: 0.2rem;">
+                    Size: {{ doc.file_size|filesizeformat }} &bull; Uploaded {{ doc.uploaded_at|date:"M d, Y g:i A" }}
+                  </div>
+                  <div style="margin-top: 0.35rem;">
+                    {% if doc.organization_status == 'ORGANIZED' %}
+                      <span style="background-color: #eaf4ee; color: #1f5135; font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.45rem; border-radius: 4px; border: 1px solid #c2e2ce;">
+                        <i class="fa-solid fa-check"></i> Organized ({{ doc.organized_category }})
+                      </span>
+                      {% if doc.organized_path %}
+                        <small style="color: #666; font-size: 0.75rem; display: block; margin-top: 0.2rem; font-family: 'Outfit', sans-serif;">
+                          Path: {{ doc.organized_path }}
+                        </small>
+                      {% endif %}
+                    {% else %}
+                      <span style="background-color: var(--beige); color: #634f18; font-size: 0.75rem; font-weight: 600; padding: 0.15rem 0.45rem; border-radius: 4px;">
+                        {{ doc.get_organization_status_display }}
+                      </span>
+                    {% endif %}
+                  </div>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                  <button type="button" 
+                          onclick="openDocPreview('admin_preview_modal_{{ doc.id }}')"
+                          class="nav-link-btn" 
+                          id="admin_preview_btn_{{ doc.id }}"
+                          style="padding: 0.45rem 0.85rem; font-size: 0.85rem; background-color: var(--green); border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; font-family: 'Outfit', sans-serif !important;">
+                    <i class="fa-solid fa-eye"></i> Preview
+                  </button>
+                  <a href="{% url 'management:document_download' doc.id %}" target="_blank" class="nav-link-item" style="border: 1px solid var(--gray-green); background-color: #ffffff; padding: 0.4rem 0.85rem; border-radius: 6px; font-size: 0.85rem; display: inline-flex; align-items: center; gap: 0.4rem; color: var(--dark-text); font-weight: 600; font-family: 'Outfit', sans-serif !important;">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Open / Download
+                  </a>
+                </div>
+              </div>
+
+              <!-- Admin Document Preview Verification Modal -->
+              <div id="admin_preview_modal_{{ doc.id }}" 
+                   style="display: none; position: fixed; inset: 0; z-index: 9999; background-color: rgba(36, 41, 46, 0.75); backdrop-filter: blur(2px); align-items: center; justify-content: center; padding: 1rem;">
+                <div style="background-color: #ffffff; border-radius: 8px; border: 1px solid var(--gray-green); width: 100%; max-width: 960px; max-height: 92vh; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(0,0,0,0.25); overflow: hidden;">
+                  
+                  <!-- Modal Header -->
+                  <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--gray-green); display: flex; justify-content: space-between; align-items: center; background-color: #faf9f6;">
+                    <div style="display: flex; align-items: center; gap: 0.65rem;">
+                      <div style="width: 32px; height: 32px; border-radius: 6px; background-color: var(--green); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 0.95rem;">
+                        <i class="fa-solid fa-file-circle-check"></i>
+                      </div>
+                      <div>
+                        <h3 style="font-size: 1.05rem; font-weight: 700; color: #24292e; margin: 0; font-family: 'Outfit', sans-serif !important;">
+                          Admin Verification: {{ doc.original_filename }}
+                        </h3>
+                        <div style="font-size: 0.8rem; color: #666; margin-top: 0.1rem;">
+                          {{ doc.file_extension|upper }} &bull; {{ doc.file_size|filesizeformat }} &bull; Status: {{ doc.get_organization_status_display }}
+                        </div>
+                      </div>
+                    </div>
+                    <button type="button" 
+                            onclick="closeDocPreview('admin_preview_modal_{{ doc.id }}')" 
+                            style="background: transparent; border: none; font-size: 1.5rem; cursor: pointer; color: #666; padding: 0.2rem 0.6rem; line-height: 1; font-family: 'Outfit', sans-serif !important;"
+                            aria-label="Close Preview">
+                      &times;
+                    </button>
+                  </div>
+
+                  <!-- Verification Instruction Bar -->
+                  <div style="background-color: var(--off-white); border-bottom: 1px solid var(--beige); padding: 0.65rem 1.25rem; font-size: 0.85rem; color: #444; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                      <i class="fa-solid fa-circle-check" style="color: var(--green-dark);"></i>
+                      <span><strong>Document Authenticity Review:</strong> Verify candidate details, official seals, and attached information.</span>
+                    </div>
+                    <div>
+                      <a href="{% url 'management:document_download' doc.id %}" 
+                         target="_blank" 
+                         class="nav-link-item"
+                         style="border: 1px solid var(--gray-green); background-color: #ffffff; padding: 0.25rem 0.65rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; font-family: 'Outfit', sans-serif !important;">
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i> Open in New Tab
+                      </a>
+                    </div>
+                  </div>
+
+                  <!-- Modal Document Viewport -->
+                  <div style="flex: 1; overflow: auto; padding: 1rem; background-color: #ece8dc; min-height: 500px; display: flex; align-items: center; justify-content: center;">
+                    {% if doc.file_extension|lower == '.pdf' %}
+                      <iframe src="{% url 'management:document_download' doc.id %}" 
+                              style="width: 100%; height: 68vh; min-height: 500px; border: 1px solid var(--gray-green); border-radius: 4px; background-color: #ffffff;"
+                              title="Document Preview: {{ doc.original_filename }}">
+                        <p style="padding: 1.5rem; text-align: center;">
+                          Your browser does not support inline PDFs. 
+                          <a href="{% url 'management:document_download' doc.id %}" target="_blank" style="color: var(--green-dark); text-decoration: underline; font-weight: 600;">
+                            Click here to open and verify the PDF document.
+                          </a>
+                        </p>
+                      </iframe>
+                    {% elif doc.file_extension|lower in '.png,.jpg,.jpeg,.webp,.gif' %}
+                      <div style="text-align: center; max-height: 68vh; overflow: auto; width: 100%;">
+                        <img src="{% url 'management:document_download' doc.id %}" 
+                             alt="{{ doc.original_filename }}" 
+                             style="max-width: 100%; max-height: 65vh; object-fit: contain; border-radius: 4px; border: 1px solid var(--gray-green); box-shadow: 0 4px 12px rgba(0,0,0,0.12);">
+                      </div>
+                    {% else %}
+                      <div style="background-color: #ffffff; border: 1px solid var(--gray-green); border-radius: 8px; padding: 2.5rem 2rem; text-align: center; max-width: 520px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);">
+                        <i class="fa-solid fa-file-lines" style="font-size: 2.8rem; color: var(--green); margin-bottom: 1rem;"></i>
+                        <h4 style="font-size: 1.15rem; font-weight: 700; color: #24292e; margin-bottom: 0.5rem; font-family: 'Outfit', sans-serif !important;">
+                          {{ doc.original_filename }}
+                        </h4>
+                        <p style="font-size: 0.9rem; color: #666; margin-bottom: 1.5rem; line-height: 1.5;">
+                          This document type ({{ doc.file_extension|upper }}) can be downloaded or inspected in an external viewer.
+                        </p>
+                        <a href="{% url 'management:document_download' doc.id %}" 
+                           target="_blank" 
+                           class="nav-link-btn" 
+                           style="padding: 0.6rem 1.4rem; font-size: 0.95rem; font-family: 'Outfit', sans-serif !important;">
+                          <i class="fa-solid fa-arrow-up-right-from-square"></i> Open / Download File
+                        </a>
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <!-- Modal Footer -->
+                  <div style="padding: 0.75rem 1.25rem; border-top: 1px solid var(--gray-green); background-color: #faf9f6; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 0.82rem; color: #666;">
+                      Application Reference: <strong>{{ application.reference }}</strong>
+                    </span>
+                    <button type="button" 
+                            onclick="closeDocPreview('admin_preview_modal_{{ doc.id }}')" 
+                            class="nav-link-item"
+                            style="border: 1px solid var(--gray-green); background-color: #ffffff; border-radius: 4px; padding: 0.45rem 1.1rem; font-weight: 600; font-size: 0.85rem; cursor: pointer; font-family: 'Outfit', sans-serif !important;">
+                      Close Preview
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p style="font-size: 0.9rem; color: #777; font-style: italic;">
+            No supporting documents were uploaded with this application.
+          </p>
+        {% endif %}
+      </div>
+
+      <!-- Status History / Audit Trail -->
+      <div style="background-color: #ffffff; border: 1px solid var(--gray-green); border-radius: 8px; padding: 1.75rem 2rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+        <h3 style="font-size: 1.15rem; font-weight: 700; color: #24292e; margin-bottom: 1rem;">
+          <i class="fa-solid fa-clock-rotate-left" style="color: var(--green);"></i> Status History
+        </h3>
+
+        {% if status_logs %}
+          <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+            {% for log in status_logs %}
+              <div style="border-left: 3px solid var(--gray-green); padding-left: 1rem; font-size: 0.9rem;">
+                <div style="font-weight: 600; color: #333;">
+                  {% if log.from_status %}{{ log.from_status }} &rarr; {% endif %}
+                  <span class="badge-status badge-{{ log.to_status }}" style="font-size: 0.75rem;">{{ log.to_status }}</span>
+                </div>
+                <div style="font-size: 0.8rem; color: #777; margin-top: 0.15rem;">
+                  {{ log.timestamp|date:"M d, Y \a\t g:i A" }}
+                  {% if log.changed_by %} by {{ log.changed_by.get_full_name|default:log.changed_by.username }}{% endif %}
+                </div>
+                {% if log.note %}
+                  <div style="color: #555; margin-top: 0.3rem; font-style: italic;">
+                    "{{ log.note }}"
+                  </div>
+                {% endif %}
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p style="font-size: 0.9rem; color: #777;">No previous status transitions recorded.</p>
+        {% endif %}
+      </div>
+
+    </div>
+
+    <!-- Right Column: Review & Update Actions Form -->
+    <div>
+      <div style="background-color: #ffffff; border: 1px solid var(--gray-green); border-radius: 8px; padding: 2rem 1.75rem; box-shadow: 0 1px 3px rgba(0,0,0,0.04); position: sticky; top: 5rem;">
+        
+        <h3 style="font-size: 1.25rem; font-weight: 700; color: #24292e; margin-bottom: 0.35rem;">
+          Update Application
+        </h3>
+        <p style="color: #666; font-size: 0.88rem; margin-bottom: 1.5rem;">
+          Change review status and send communication to the applicant.
+        </p>
+
+        {% if form.non_field_errors %}
+          <div class="alert-box error" style="margin-bottom: 1.25rem;">
+            {% for error in form.non_field_errors %}
+              <span>{{ error }}</span>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <form method="post" novalidate id="application_review_form">
+          {% csrf_token %}
+
+          <!-- Status Choice -->
+          <div style="margin-bottom: 1.5rem;">
+            <label for="application_status" style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.4rem; color: #333;">
+              Application Status <span style="color: #b54242;">*</span>
+            </label>
+            {{ form.status }}
+            {% if form.status.errors %}
+              <div style="color: #b54242; font-size: 0.85rem; margin-top: 0.3rem;">
+                {{ form.status.errors.0 }}
+              </div>
+            {% endif %}
+            <small style="color: #777; font-size: 0.8rem; display: block; margin-top: 0.35rem;">
+              Enforces valid lifecycle transitions.
+            </small>
+          </div>
+
+          <!-- Citizen-facing response -->
+          <div style="margin-bottom: 1.5rem;">
+            <label for="citizen_response" style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.4rem; color: #333;">
+              Response to Citizen
+            </label>
+            {{ form.citizen_response }}
+            {% if form.citizen_response.errors %}
+              <div style="color: #b54242; font-size: 0.85rem; margin-top: 0.3rem;">
+                {{ form.citizen_response.errors.0 }}
+              </div>
+            {% endif %}
+            <small style="color: #2e6088; font-size: 0.8rem; display: block; margin-top: 0.35rem;">
+              <i class="fa-solid fa-eye"></i> <strong>Citizen Visible:</strong> Shown to the applicant when they check their status. Required if rejecting or requesting more info.
+            </small>
+          </div>
+
+          <!-- Internal private notes -->
+          <div style="margin-bottom: 1.75rem;">
+            <label for="internal_notes" style="display: block; font-weight: 700; font-size: 0.9rem; margin-bottom: 0.4rem; color: #333;">
+              Private Internal Notes
+            </label>
+            {{ form.internal_notes }}
+            {% if form.internal_notes.errors %}
+              <div style="color: #b54242; font-size: 0.85rem; margin-top: 0.3rem;">
+                {{ form.internal_notes.errors.0 }}
+              </div>
+            {% endif %}
+            <small style="color: #8a6e1e; font-size: 0.8rem; display: block; margin-top: 0.35rem;">
+              <i class="fa-solid fa-lock"></i> <strong>Staff Eyes Only:</strong> Private records. Never shown to citizens.
+            </small>
+          </div>
+
+          {% if can_change_applications %}
+          <button type="submit" class="nav-link-btn" id="save_review_btn" style="width: 100%; justify-content: center; border: none; cursor: pointer; padding: 0.8rem; font-size: 1rem; background-color: var(--green);">
+            <i class="fa-solid fa-floppy-disk"></i> Save Changes &amp; Notify
+          </button>
+          {% else %}
+          <div style="background-color: var(--off-white); border: 1px solid var(--beige); border-radius: 6px; padding: 0.85rem; font-size: 0.85rem; color: #666; text-align: center;">
+            <i class="fa-solid fa-lock"></i> <strong>Read-Only Mode:</strong> Your role does not have permission to edit or change application statuses.
+          </div>
+          {% endif %}
+
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

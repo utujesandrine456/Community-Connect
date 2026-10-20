@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Community Connect{% endblock %}</title>
+  <meta name="description" content="Community Connect — Simple, secure community assistance portal">
+  
+  <!-- Typography: Outfit Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+  
+  <style>
+    /* Ensure exact solid palette and Outfit font enforcement */
+    :root {
+      --green:      #769382;
+      --green-dark: #5b7666;
+      --beige:      #E0D7BF;
+      --gray-green: #C0C3B9;
+      --off-white:  #F3EFE3;
+      --dark-text:  #24292e;
+      --white:      #ffffff;
+    }
+    body, button, input, select, textarea, optgroup, .btn, .nav-link-btn, .nav-link-admin, .nav-link-item,
+    h1, h2, h3, h4, h5, h6, p, a, label, table, th, td {
+      font-family: 'Outfit', sans-serif;
+    }
+    button, input[type="submit"], input[type="button"], input[type="reset"],
+    .btn, .nav-link-btn, .nav-link-admin, .nav-link-item {
+      font-family: 'Outfit', sans-serif !important;
+    }
+    
+    /* Dedicated FontAwesome 6 icon rules */
+    .fa, .fas, .fa-solid {
+      font-family: "Font Awesome 6 Free" !important;
+      font-weight: 900 !important;
+      font-style: normal !important;
+      display: inline-block;
+    }
+    .far, .fa-regular {
+      font-family: "Font Awesome 6 Free" !important;
+      font-weight: 400 !important;
+      font-style: normal !important;
+      display: inline-block;
+    }
+    .fab, .fa-brands {
+      font-family: "Font Awesome 6 Brands" !important;
+      font-weight: 400 !important;
+      font-style: normal !important;
+      display: inline-block;
+    }
+    .fa::before, .fas::before, .fa-solid::before,
+    .far::before, .fa-regular::before,
+    .fab::before, .fa-brands::before,
+    [class*="fa-"]::before {
+      font-family: inherit !important;
+      font-style: normal !important;
+    }
+    body {
+      background-color: var(--off-white);
+      color: var(--dark-text);
+      margin: 0;
+      padding: 0;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    
+    /* Navigation Bar */
+    .site-nav {
+      background-color: var(--white);
+      border-bottom: 2px solid var(--gray-green);
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .site-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--green-dark);
+    }
+    .site-brand-icon {
+      background-color: var(--green);
+      color: var(--white);
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+    .nav-link-item {
+      color: var(--dark-text);
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      transition: background-color 0.15s ease;
+    }
+    .nav-link-item:hover {
+      background-color: var(--beige);
+    }
+    .nav-link-btn {
+      font-family: 'Outfit', sans-serif !important;
+      background-color: var(--green);
+      color: var(--white) !important;
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .nav-link-btn:hover {
+      background-color: var(--green-dark);
+    }
+    .nav-link-admin {
+      color: var(--dark-text);
+      font-size: 0.85rem;
+      opacity: 0.8;
+      border-left: 1px solid var(--gray-green);
+      padding-left: 1rem;
+    }
+    .nav-link-admin:hover {
+      opacity: 1;
+      color: var(--green-dark);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1100px;
+      margin: 2rem auto;
+      padding: 0 1.2rem;
+    }
+    .container-narrow {
+      max-width: 700px;
+      margin: 2.5rem auto;
+      padding: 0 1.2rem;
+    }
+
+    /* Alerts */
+    .alert-banner-wrap {
+      max-width: 1100px;
+      margin: 1.5rem auto 0;
+      padding: 0 1.2rem;
+    }
+    .alert-box {
+      padding: 0.85rem 1.2rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid transparent;
+    }
+    .alert-box.success {
+      background-color: #eaf4ee;
+      border-color: var(--green);
+      color: #1f5135;
+    }
+    .alert-box.error {
+      background-color: #fae8e8;
+      border-color: #d9534f;
+      color: #842029;
+    }
+    .alert-box.info {
+      background-color: var(--beige);
+      border-color: var(--gray-green);
+      color: var(--dark-text);
+    }
+
+    /* Solid badges */
+    .badge-status {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+    .badge-PENDING {
+      background-color: var(--beige);
+      color: #634f18;
+      border: 1px solid #c9bda1;
+    }
+    .badge-UNDER_REVIEW {
+      background-color: #dbeafe;
+      color: #1e40af;
+      border: 1px solid #bfdbfe;
+    }
+    .badge-NEEDS_INFORMATION {
+      background-color: #fed7aa;
+      color: #9a3412;
+      border: 1px solid #fdba74;
+    }
+    .badge-APPROVED {
+      background-color: var(--green);
+      color: var(--white);
+    }
+    .badge-REJECTED {
+      background-color: #fca5a5;
+      color: #7f1d1d;
+      border: 1px solid #f87171;
+    }
+
+    /* Footer */
+    .site-footer {
+      background-color: var(--white);
+      border-top: 1px solid var(--gray-green);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: #555;
+      margin-top: 4rem;
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="site-nav">
+    <a href="{% url 'applications:landing' %}" class="site-brand" id="brand_link">
+      <span class="site-brand-icon"><i class="fa-solid fa-hand-holding-heart"></i></span>
+      <span>Community Connect</span>
+    </a>
+
+    <nav class="nav-links">
+      <a href="{% url 'applications:landing' %}" class="nav-link-item">Home</a>
+      <a href="{% url 'applications:status' %}" class="nav-link-item">Check Status</a>
+      <a href="{% url 'applications:apply' %}" class="nav-link-btn" id="nav_apply_btn">
+        <i class="fa-solid fa-file-signature"></i> Apply for Help
+      </a>
+
+      {% if user.is_authenticated and user.is_staff %}
+        <a href="{% url 'management:dashboard' %}" class="nav-link-item" style="font-weight: 600; color: var(--green-dark);">
+          {% if user.is_superuser %}
+            <i class="fa-solid fa-shield-halved"></i> Admin Dashboard
+          {% else %}
+            <i class="fa-solid fa-gauge"></i> Staff Dashboard
+          {% endif %}
+        </a>
+      {% else %}
+        <a href="{% url 'management:login' %}" class="nav-link-admin" id="nav_admin_link">
+          <i class="fa-solid fa-lock"></i> Staff Login
+        </a>
+      {% endif %}
+      {% if user.is_authenticated %}
+        <a href="{% url 'management:logout' %}" class="nav-link-admin" id="nav_logout_link">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout ({{ user.username }})
+        </a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <!-- Flash Messages -->
+  {% if messages %}
+  <div class="alert-banner-wrap">
+    {% for message in messages %}
+    <div class="alert-box {{ message.tags|default:'info' }}">
+      <span>{{ message }}</span>
+      <button type="button" style="background:none; border:none; cursor:pointer; font-weight:bold;" onclick="this.parentElement.remove()">✕</button>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Page Content -->
+  <main id="main_content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <p>Community Connect &copy; 2026 — A community assistance request portal.</p>
+    <p style="margin-top: 0.35rem; color: #777; font-size: 0.8rem;">
+      <a href="{% url 'applications:landing' %}" style="text-decoration: underline;">Home</a> &bull;
+      <a href="{% url 'applications:apply' %}" style="text-decoration: underline;">Apply for Help</a> &bull;
+      <a href="{% url 'applications:status' %}" style="text-decoration: underline;">Check Status</a>
+    </p>
+  </footer>
+
+  <script>
+    function openDocPreview(modalId) {
+      var modal = document.getElementById(modalId);
+      if (modal) {
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    function closeDocPreview(modalId) {
+      var modal = document.getElementById(modalId);
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    }
+
+    window.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('[id*="preview_modal_"]').forEach(function(modal) {
+          modal.style.display = 'none';
+        });
+        document.body.style.overflow = 'auto';
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      if (e.target && e.target.id && (e.target.id.indexOf('preview_modal_') !== -1)) {
+        e.target.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      }
+    });
+  </script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>
